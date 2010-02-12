@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.vaadin.contrib.gwtgraphics.client.DrawingArea;
+import com.vaadin.contrib.gwtgraphics.client.Line;
 import com.vaadin.contrib.gwtgraphics.client.shape.Circle;
 
 /**
@@ -141,15 +142,16 @@ public class Constello implements EntryPoint {
 		sendButton.addClickHandler(handler);
 		nameField.addKeyUpHandler(handler);
 		
-		DrawingArea canvas = new DrawingArea(400, 400);
-		final Circle circle = new Circle(200, 200, 50);
-		canvas.add(circle);
-		circle.setFillColor("green");
-		RootPanel.get("drawingArea").add(canvas);
-		circle.addClickHandler(new ClickHandler() {
-	        public void onClick(ClickEvent event) {
-	            circle.setRadius(Random.nextInt(300));
-	        }
-		});
+		Galaxy milky = new Galaxy(400, 400);
+		Star s1 = new Star(milky, 40, 40, 15);
+		milky.addStar(s1);
+		Star s2 = new Star(milky, 80, 20, 20);
+		milky.addStar(s2);
+		Star s3 = new Star(milky, 300, 120, 17);
+		milky.addStar(s3);
+		milky.linkStars(s1, s2);
+		milky.linkStars(s1, s3);
+		//milky.linkStars(s1, s3);
+		RootPanel.get("drawingArea").add(milky);
 	}
 }
