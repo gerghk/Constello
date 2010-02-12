@@ -141,17 +141,5 @@ public class Constello implements EntryPoint {
 		MyHandler handler = new MyHandler();
 		sendButton.addClickHandler(handler);
 		nameField.addKeyUpHandler(handler);
-		
-		Galaxy milky = new Galaxy(400, 400);
-		Star s1 = new Star(milky, 40, 40, 15);
-		milky.addStar(s1);
-		Star s2 = new Star(milky, 80, 20, 20);
-		milky.addStar(s2);
-		Star s3 = new Star(milky, 300, 120, 17);
-		milky.addStar(s3);
-		milky.linkStars(s1, s2);
-		milky.linkStars(s1, s3);
-		//milky.linkStars(s1, s3);
-		RootPanel.get("drawingArea").add(milky);
 	}
 }
