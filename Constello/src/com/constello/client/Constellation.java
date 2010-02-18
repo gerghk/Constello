@@ -14,6 +14,13 @@ public class Constellation extends DrawingArea {
 		super(width, height);
 		
 	}
+	
+	/* Function for executing a Move on the Constellation */
+	public Boolean executeMove(Move<Star> move) {
+		
+		return true;
+	}
 
+	/* Private members */
 	private List<Star> _stars = new ArrayList<Star>();
 }
