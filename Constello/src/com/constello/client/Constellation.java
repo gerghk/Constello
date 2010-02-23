@@ -16,7 +16,7 @@ public class Constellation extends DrawingArea {
 	}
 	
 	/* Function for executing a Move on the Constellation */
-	public Boolean executeMove(Move<Star> move) {
+	public Boolean executeMove(Move move) {
 		
 		return true;
 	}
