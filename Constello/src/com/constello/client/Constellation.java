@@ -20,6 +20,18 @@ public class Constellation extends DrawingArea {
 		
 		return true;
 	}
+	
+	/* Audit interface */
+	public int auditErrors(int scope) {
+		
+		// Instantiate the error counter
+		AuditReport ar = new AuditReport();
+		
+		// Check invariants
+		// ar.verify(_SomeExpression_, "_SomeExpression_ is true");
+		
+		return ar.falseInvariants();
+	}
 
 	/* Private members */
 	private List<Star> _stars = new ArrayList<Star>();

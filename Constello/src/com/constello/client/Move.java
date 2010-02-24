@@ -9,4 +9,17 @@ public class Move extends Stack<Star> {
 		
 		super();
 	}
+	
+	/* Audit interface */
+	public int auditErrors(int scope) {
+		
+		// Instantiate the error counter
+		AuditReport ar = new AuditReport();
+		
+		// Check invariants
+		// ar.verify(_SomeExpression_, "_SomeExpression_ is true");
+		
+		return ar.falseInvariants();
+	}
+
 }
