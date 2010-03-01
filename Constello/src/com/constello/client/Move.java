@@ -14,7 +14,7 @@ public class Move extends Stack<Star> {
 	public int auditErrors(int scope) {
 		
 		// Instantiate the error counter
-		AuditReport ar = new AuditReport();
+		AuditReport ar = new AuditReport("Move");
 		
 		// Check invariants
 		// ar.verify(_SomeExpression_, "_SomeExpression_ is true");

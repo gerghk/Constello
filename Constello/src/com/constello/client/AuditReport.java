@@ -3,8 +3,9 @@ package com.constello.client;
 public class AuditReport {
 
 	/* Default Constructor */
-	public AuditReport() {
+	public AuditReport(String duaName) {
 		
+		_duaName = duaName;
 	}
 	
 	/* Getter for _falseInvariants */
@@ -24,6 +25,7 @@ public class AuditReport {
 		
 		if(!expr) {
 			
+			Log.logMessage(_duaName + ": ! " + err_msg);
 			++_falseInvariants;
 		}
 		
@@ -31,5 +33,6 @@ public class AuditReport {
 	}
 	
 	/* Private members */
+	private String _duaName;
 	private int _falseInvariants = 0;
 }

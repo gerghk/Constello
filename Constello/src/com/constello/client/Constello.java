@@ -141,5 +141,25 @@ public class Constello implements EntryPoint {
 		MyHandler handler = new MyHandler();
 		sendButton.addClickHandler(handler);
 		nameField.addKeyUpHandler(handler);
+		
+		// Create Constellation
+		Constellation cn = new Constellation(400, 400);
+		RootPanel.get("boardContainer").add(cn);
+		
+		// Add stars to Constellation
+		// TODO - Move this to Level constructors
+		Star s1 = new Star(200, 200, 15);
+		Star s2 = new Star(300, 200, 20);
+		Star s3 = new Star(100, 100, 25);
+		cn.addStar(s1);
+		cn.addStar(s2);
+		cn.addStar(s3);
+		
+		// Initialize Log Buffer
+		Log.Initialize();
+		
+		// Audit Constellation
+		int errs = cn.auditErrors(0);
+		Log.logMessage(errs + " errors found");
 	}
 }
