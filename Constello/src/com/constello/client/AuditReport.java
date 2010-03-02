@@ -25,7 +25,7 @@ public class AuditReport {
 		
 		if(!expr) {
 			
-			Log.logMessage(_duaName + ": ! " + err_msg);
+			Log.logMessage("ERROR (" + _duaName + ") : ! " + err_msg);
 			++_falseInvariants;
 		}
 		

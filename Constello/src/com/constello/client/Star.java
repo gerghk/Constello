@@ -1,7 +1,9 @@
 package com.constello.client;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.vaadin.contrib.gwtgraphics.client.shape.Circle;
 
@@ -24,12 +26,19 @@ public class Star extends Circle {
 		
 		_parent = c;
 	}
+	
+	/* Add a neighbor and its corresponding link */
+	public void addNeighbor(Star nbr, Link lnk) {
+		
+		_neighbors.add(nbr);
+		_links.put(nbr, lnk);
+	}
 
 	/* Audit interface */
 	public int auditErrors(int scope) {
 		
 		// Instantiate the error counter
-		AuditReport ar = new AuditReport("Star");
+		AuditReport ar = new AuditReport("Star (" + getX() + ", " + getY() + ")");
 		
 		// Check invariants
 		// ar.verify(_SomeExpression_, "_SomeExpression_ is true");
@@ -39,5 +48,8 @@ public class Star extends Circle {
 
 	/* Private members */
 	private List<Star> _neighbors = new ArrayList<Star>();
+	private Map<Star, Link> _links = new HashMap<Star, Link>();
 	private Constellation _parent = null;
+	private int _numNeighbors = 0; // redundant: for auditing _neighbors
+	private int _numLinks = 0; // redundant: for auditing _links
 }

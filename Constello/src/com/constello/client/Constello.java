@@ -154,12 +154,13 @@ public class Constello implements EntryPoint {
 		cn.addStar(s1);
 		cn.addStar(s2);
 		cn.addStar(s3);
+		cn.linkStars(s1, s2);
+		cn.linkStars(s2, s3);
 		
 		// Initialize Log Buffer
 		Log.Initialize();
 		
 		// Audit Constellation
 		int errs = cn.auditErrors(0);
-		Log.logMessage(errs + " errors found");
 	}
 }
