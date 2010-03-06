@@ -157,6 +157,8 @@ public class Constello implements EntryPoint {
 		cn.linkStars(s1, s2);
 		cn.linkStars(s2, s3);
 		
+		cn.dimLinks();
+		
 		// Initialize Log Buffer
 		Log.Initialize();
 		

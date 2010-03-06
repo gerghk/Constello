@@ -1,6 +1,7 @@
 package com.constello.client;
 
 import com.vaadin.contrib.gwtgraphics.client.Line;
+import com.vaadin.contrib.gwtgraphics.client.animation.Animate;
 
 public class Link extends Line {
 
@@ -9,8 +10,14 @@ public class Link extends Line {
 		
 		// Call Line constructor with s1 and s2's coordinates
 		super(s1.getX(), s1.getY(), s2.getX(), s2.getY());
+		
+		// Store pointers to the two stars
 		_s1 = s1;
 		_s2 = s2;
+		
+		// Set graphical properties
+		setStrokeColor("yellow");
+		setStrokeWidth(10);
 	}
 	
 	/* Getter for _parent */
@@ -23,6 +30,12 @@ public class Link extends Line {
 	public void parentIs(Constellation c) {
 		
 		_parent = c;
+	}
+	
+	/* Dim the link */
+	public void dim() {
+		
+		new Animate(this, "strokewidth", 10, 0, 2000).start();
 	}
 
 	/* Audit interface */

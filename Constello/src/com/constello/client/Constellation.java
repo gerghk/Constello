@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.vaadin.contrib.gwtgraphics.client.DrawingArea;
+import com.vaadin.contrib.gwtgraphics.client.animation.Animate;
 
 public class Constellation extends DrawingArea {
 
@@ -35,6 +36,17 @@ public class Constellation extends DrawingArea {
 		_links.add(lk);
 		lk.parentIs(this);
 		++_numLinks;
+	}
+	
+	/* Slowly dim the links at beginning of round*/
+	public void dimLinks() {
+		
+		Iterator<Link> linkListIt = _links.iterator();
+		while(linkListIt.hasNext()) {
+			
+			Link l = linkListIt.next();
+			l.dim();
+		}
 	}
 	
 	/* Execute _nextMove on the Constellation */
