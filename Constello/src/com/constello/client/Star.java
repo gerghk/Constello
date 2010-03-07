@@ -33,43 +33,26 @@ public class Star extends Circle {
 				// Need victim because 'this' refers to the ClickHandler
 				Star victim = (Star) event.getSource();
 				
-				if(!_parent.active()) return;
+				if(!_parent.active() || nimmed()) return;
 				
-				// See if this star is already in parent's nextMove
-				int pos = _parent.nextMove.search(victim);
-				if(pos > 0) {
-					
-					// If it is, pop stack until this star is at the top
-					while(pos-- != 1) {
-						
-						Star s = _parent.nextMove.pop();
-						s.nimmedIs(false); // Unnim the star
-						
-						s.dimLink(_parent.nextMove.peek());
+				if (!_parent.nextMove.empty()) {
+
+					// See if it is nextMove.peek()'s neighbor
+					if (!_neighbors.contains(_parent.nextMove.peek())) {
+
+						// If not, start a new Move
+						_parent.nextMove.clear();
+						_parent.dimLinks();
+					}
+					else {
+
+						// Otherwise, glow the path from nextMove.peek() to this star
+						_links.get(_parent.nextMove.peek()).glow();
 					}
 				}
-				else {
-					
-					// If it isn't in parent's nextMove
-					if(!_parent.nextMove.empty()) {
-						
-						// See if it is nextMove.peek()'s neighbor
-						if(!_neighbors.contains(_parent.nextMove.peek())) {
-							
-							// If not, start a new Move
-							_parent.nextMove.clear();
-							_parent.dimLinks();
-						}
-						else {
-							
-							// Otherwise, glow the path from nextMove.peek() to this star
-							_links.get(_parent.nextMove.peek()).glow();
-						}
-					}
-					
-					victim.nimmedIs(true);
-					_parent.nextMove.push(victim);
-				}
+
+				victim.nimmedIs(true);
+				_parent.nextMove.push(victim);
 			}
 		});
 	}
