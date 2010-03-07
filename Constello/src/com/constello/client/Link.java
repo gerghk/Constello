@@ -35,7 +35,7 @@ public class Link extends Line {
 	/* Dim the link */
 	public void dim() {
 		
-		new Animate(this, "strokewidth", 10, 0, 2000).start();
+		new Animate(this, "strokeopacity", 1.0, 0.0, 1000).start();
 	}
 
 	/* Audit interface */

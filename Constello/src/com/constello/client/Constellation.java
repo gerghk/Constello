@@ -65,6 +65,7 @@ public class Constellation extends DrawingArea {
 		// Check invariants
 		// ar.verify(_SomeExpression_, "_SomeExpression_ is true");
 		
+		// Section 1 - Local invariants
 		// Invariant 1.1
 		// - check that _stars.size() matches _numStars
 		ar.verify(_stars.size() == _numStars, "Star list size matches star count");
@@ -77,7 +78,7 @@ public class Constellation extends DrawingArea {
 		// - check that getVectorObjectCount matches _numStars + _numLinks
 		ar.verify(getVectorObjectCount() == (_numStars + _numLinks), "Vector object count matches (star count + link count)");
 		
-		
+		// Section 2 - Instantiation invariants
 		// Invariant 2.1
 		// - every Star in _stars should have this Constellation as the parent
 		Iterator<Star> starListIt = _stars.iterator();

@@ -143,7 +143,7 @@ public class Constello implements EntryPoint {
 		nameField.addKeyUpHandler(handler);
 		
 		// Create Constellation
-		Constellation cn = new Constellation(400, 400);
+		final Constellation cn = new Constellation(400, 400);
 		RootPanel.get("boardContainer").add(cn);
 		
 		// Add stars to Constellation
@@ -157,7 +157,14 @@ public class Constello implements EntryPoint {
 		cn.linkStars(s1, s2);
 		cn.linkStars(s2, s3);
 		
-		cn.dimLinks();
+		final Button startButton = new Button("Start");
+		startButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				cn.dimLinks();
+			}
+		});
+		
+		RootPanel.get("boardContainer").add(startButton);
 		
 		// Initialize Log Buffer
 		Log.Initialize();
