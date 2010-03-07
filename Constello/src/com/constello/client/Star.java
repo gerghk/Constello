@@ -111,12 +111,6 @@ public class Star extends Circle {
 		_links.put(nbr, lnk);
 	}
 	
-	/* Dim the link between this star and the specified star */
-	public void dimLink(Star nbr) {
-		
-		_links.get(nbr).dim();
-	}
-
 	/* Audit interface */
 	public int auditErrors(int scope) {
 		

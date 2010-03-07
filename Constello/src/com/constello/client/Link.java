@@ -41,7 +41,7 @@ public class Link extends Line {
 	/* Glow the link */
 	public void glow() {
 		
-		new Animate(this, "strokeopacity", getStrokeOpacity(), 1.0, 1000).start();
+		new Animate(this, "strokeopacity", getStrokeOpacity(), 0.5, 1000).start();
 	}
 
 	/* Audit interface */
