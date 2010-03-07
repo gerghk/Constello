@@ -71,25 +71,29 @@ public class Constellation extends DrawingArea {
 	public int auditErrors(int scope) {
 		
 		// Instantiate the error counter
-		AuditReport ar = new AuditReport("Constellation");
+		String auditName = "Constellation";
+		AuditReport ar = new AuditReport(auditName);
 		
-		// Check invariants
-		// ar.verify(_SomeExpression_, "_SomeExpression_ is true");
-		
-		// Section 1 - Local invariants
+		// Section 1 - Shallow Audit
+		if(scope < 1) return ar.falseInvariants();
+		Log.logMessage("--- Begin Shallow Audit [" + auditName + "] ---");
 		// Invariant 1.1
 		// - check that _stars.size() matches _numStars
 		ar.verify(_stars.size() == _numStars, "Star list size matches star count");
-		
 		// Invariant 1.2
 		// - check that _links.size() matches _numLinks
 		ar.verify(_links.size() == _numLinks, "Link list size matches link count");
-		
 		// Invariant 1.3
 		// - check that getVectorObjectCount matches _numStars + _numLinks
 		ar.verify(getVectorObjectCount() == (_numStars + _numLinks), "Vector object count matches (star count + link count)");
+		// Invariant 1.4
+		// - check that nextMove is empty if _active is false
+		ar.verify(_active || nextMove.empty(), "Constellation is either active or nextMove must be empty");
+		Log.logMessage("--- End Shallow Audit [" + auditName + "] ---");
 		
-		// Section 2 - Instantiation invariants
+		// Section 2 - Deep Audit
+		if(scope < 2) return ar.falseInvariants();
+		Log.logMessage("--- Begin Deep Audit [" + auditName + "] ---"); 
 		// Invariant 2.1
 		// - every Star in _stars should have this Constellation as the parent
 		Iterator<Star> starListIt = _stars.iterator();
@@ -98,7 +102,6 @@ public class Constellation extends DrawingArea {
 			Star s = starListIt.next();
 			ar.verify(s.parent() == this, "Star child points back to correct Constellation parent");
 		}
-		
 		// Invariant 2.2
 		// - every Link in _links should have this Constellation as the parent
 		Iterator<Link> linkListIt = _links.iterator();
@@ -107,6 +110,37 @@ public class Constellation extends DrawingArea {
 			Link l = linkListIt.next();
 			ar.verify(l.parent() == this, "Link child points back to correct Constellation parent");
 		}
+		Log.logMessage("--- End Deep Audit [" + auditName + "] ---");
+		
+		// Section 3 - Instantiation Audit
+		if(scope < 3) return ar.falseInvariants();
+		Log.logMessage("--- Begin Instantiation Audit [" + auditName + "] ---");
+		// Invariant 3.1
+		// - check that all Star children in _stars pass audit
+		int childErrors = 0;
+		starListIt = _stars.iterator();
+		while(starListIt.hasNext()) {
+			
+			Star s = starListIt.next();
+			childErrors += s.auditErrors(scope - 2);
+		}
+		ar.verify(childErrors == 0, "All star children passed audit");
+		// Invariant 3.2
+		// - check that all Link children in _links pass audit
+		childErrors = 0;
+		linkListIt = _links.iterator();
+		while(linkListIt.hasNext()) {
+			
+			Link l = linkListIt.next();
+			childErrors += l.auditErrors(scope - 2);
+		}
+		ar.verify(childErrors == 0, "All link children passed audit");
+		// Invariant 3.3
+		// - check that nextMove passes audit
+		childErrors = nextMove.auditErrors(scope - 2);
+		ar.verify(childErrors == 0, "nextMove passed audit");
+		Log.logMessage("--- End Instantiation Audit [" + auditName + "] ---");
+		
 		
 		return ar.falseInvariants();
 	}

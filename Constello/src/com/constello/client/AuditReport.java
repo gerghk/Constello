@@ -14,19 +14,17 @@ public class AuditReport {
 		return _falseInvariants;
 	}
 	
-	/* Setter for _falseInvariants */
-	public void falseInvariantsIs(int errs) {
-		
-		_falseInvariants = errs;
-	}
-	
 	/* Verify the expression is true, otherwise log errors */
 	public Boolean verify(Boolean expr, String err_msg) {
 		
 		if(!expr) {
 			
-			Log.logMessage("ERROR (" + _duaName + ") : ! " + err_msg);
+			Log.logMessage("FAIL [" + _duaName + "] : ! " + err_msg);
 			++_falseInvariants;
+		}
+		else {
+			
+			Log.logMessage("PASS [" + _duaName + "] : " + err_msg);
 		}
 		
 		return expr;

@@ -21,11 +21,11 @@ public class Star extends Circle {
 		
 		// Set graphical properties
 		setFillColor("yellow");
-		setStrokeColor("red");
+		setStrokeColor("white");
 		setStrokeOpacity(0);
 		setStrokeWidth(5);
 		
-		// Define the click handler
+		// Define the ClickHandler
 		addClickHandler(new ClickHandler() {
 			
 			public void onClick(ClickEvent event) {
@@ -33,16 +33,25 @@ public class Star extends Circle {
 				// Need victim because 'this' refers to the ClickHandler
 				Star victim = (Star) event.getSource();
 				
-				if(!_parent.active() || nimmed()) return;
+				if(!_parent.active()) return; // Return if parent is not active
+				else if(nimmed()) {
+					
+					// Flash a green outline and return if this star is already nimmed
+					setStrokeColor("green");
+					new Animate(victim, "strokeopacity", 0.0, 1.0, 1000).start();
+					return;
+				}
 				
+				// Check if there is a move already
 				if (!_parent.nextMove.empty()) {
 
-					// See if it is nextMove.peek()'s neighbor
+					// See if this star is nextMove.peek()'s neighbor
 					if (!_neighbors.contains(_parent.nextMove.peek())) {
 
-						// If not, start a new Move
-						_parent.nextMove.clear();
-						_parent.dimLinks();
+						// If not, flash a red outline and return
+						setStrokeColor("red");
+						new Animate(victim, "strokeopacity", 1.0, 0.0, 1000).start();
+						return;
 					}
 					else {
 
@@ -54,7 +63,8 @@ public class Star extends Circle {
 				victim.nimmedIs(true);
 				_parent.nextMove.push(victim);
 			}
-		});
+		}); // End ClickHandler definition
+		
 	}
 	
 	/* Getter for _index */
@@ -92,12 +102,13 @@ public class Star extends Circle {
 		
 		if(n) {
 		
-			// Glow the red outline for newly nimmed stars
+			// Glow a green outline for newly nimmed stars
+			setStrokeColor("green");
 			new Animate(this, "strokeopacity", 0.0, 1.0, 500).start();
 		}
 		else {
 			
-			// Dim the red outline for newly unnimmed stars
+			// Dim the outline for newly unnimmed stars
 			new Animate(this, "strokeopacity", 1.0, 0.0, 500).start();
 		}
 		
@@ -111,14 +122,39 @@ public class Star extends Circle {
 		_links.put(nbr, lnk);
 	}
 	
+	/* Check if the specified star is a neighbor */
+	public Boolean hasNeighbor(Star s) {
+		
+		return _neighbors.contains(s);
+	}
+	
+	/* Check if the specified link exists for this star */
+	public Boolean hasLink(Link l) {
+		
+		return _links.containsValue(l);
+	}
+	
 	/* Audit interface */
 	public int auditErrors(int scope) {
 		
 		// Instantiate the error counter
-		AuditReport ar = new AuditReport("Star (" + getX() + ", " + getY() + ")");
+		String auditName = "Star (" + getX() + ", " + getY() + ")";
+		AuditReport ar = new AuditReport(auditName);
 		
-		// Check invariants
-		// ar.verify(_SomeExpression_, "_SomeExpression_ is true");
+		// Section 1 - Shallow Audit
+		if(scope < 1) return ar.falseInvariants();
+		Log.logMessage("--- Begin Shallow Audit [" + auditName + "] ---");
+		Log.logMessage("--- End Shallow Audit [" + auditName + "] ---");
+		
+		// Section 2 - Deep Audit
+		if(scope < 2) return ar.falseInvariants();
+		Log.logMessage("--- Begin Deep Audit [" + auditName + "] ---");
+		Log.logMessage("--- End Deep Audit [" + auditName + "] ---");
+		
+		// Section 3 - Instantiation Audit
+		if(scope < 3) return ar.falseInvariants();
+		Log.logMessage("--- Begin Instantiation Audit [" + auditName + "] ---");
+		Log.logMessage("--- End Instantiation Audit [" + auditName + "] ---");
 		
 		return ar.falseInvariants();
 	}

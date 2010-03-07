@@ -31,16 +31,19 @@ public class Log extends ScrollPanel {
 		
 		RootPanel.get("logContainer").clear();
 		Buffer = new VerticalPanel();
-		ScrollPanel sp = new ScrollPanel(Buffer);
-		sp.setSize("200", "400");
-		RootPanel.get("logContainer").add(sp);
+		Scroller = new ScrollPanel(Buffer);
+		Scroller.setSize("400", "400");
+		RootPanel.get("logContainer").add(Scroller);
 	}
 	
 	/* Append line to log buffer */
 	public static void logMessage(String msg) {
 		
-		Buffer.add(new Label(msg + "\n"));
+		Label logmsg = new Label(msg + "\n");
+		Buffer.add(logmsg);
+		Scroller.ensureVisible(logmsg);
 	}
 
 	private static VerticalPanel Buffer;
+	private static ScrollPanel Scroller;
 }

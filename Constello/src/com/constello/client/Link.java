@@ -17,7 +17,7 @@ public class Link extends Line {
 		
 		// Set graphical properties
 		setStrokeColor("yellow");
-		setStrokeWidth(10);
+		setStrokeWidth(3);
 	}
 	
 	/* Getter for _parent */
@@ -48,10 +48,26 @@ public class Link extends Line {
 	public int auditErrors(int scope) {
 		
 		// Instantiate the error counter
-		AuditReport ar = new AuditReport("Link (" + getX1() + ", " + getY1() + "), (" + getX2() + ", " + getY2() + ")");
+		String auditName = "Link (" + getX1() + ", " + getY1() + "), (" + getX2() + ", " + getY2() + ")";
+		AuditReport ar = new AuditReport(auditName);
 		
-		// Check invariants
-		// ar.verify(_SomeExpression_, "_SomeExpression_ is true");
+		// Section 1 - Shallow Audit
+		if(scope < 1) return ar.falseInvariants();
+		Log.logMessage("--- Begin Shallow Audit [" + auditName + "] ---");
+		// Invariant 1.1
+		// - check that _parent is not null
+		ar.verify(_parent != null, "Parent is not null");
+		Log.logMessage("--- End Shallow Audit [" + auditName + "] ---");
+		
+		// Section 2 - Deep Audit
+		if(scope < 2) return ar.falseInvariants();
+		Log.logMessage("--- Begin Deep Audit [" + auditName + "] ---");
+		Log.logMessage("--- End Deep Audit [" + auditName + "] ---");
+		
+		// Section 3 - Instantiation Audit
+		if(scope < 3) return ar.falseInvariants();
+		Log.logMessage("--- Begin Instantiation Audit [" + auditName + "] ---");
+		Log.logMessage("--- End Instantiation Audit [" + auditName + "] ---");
 		
 		return ar.falseInvariants();
 	}

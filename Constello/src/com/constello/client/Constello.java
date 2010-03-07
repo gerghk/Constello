@@ -162,6 +162,7 @@ public class Constello implements EntryPoint {
 			
 			public void onClick(ClickEvent event) {
 				
+				startButton.setText("Start Over");
 				cn.dimLinks();
 				cn.activeIs(true);
 				cn.nextMove.clear();
@@ -174,7 +175,7 @@ public class Constello implements EntryPoint {
 		Log.Initialize();
 		
 		// Audit Constellation
-		int errs = cn.auditErrors(0);
+		int errs = cn.auditErrors(3);
 	}
 
 	private ConstelloServiceAsync _constelloSvc = GWT.create(ConstelloService.class);

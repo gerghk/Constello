@@ -24,10 +24,23 @@ public class Move extends Stack<Star> {
 	public int auditErrors(int scope) {
 		
 		// Instantiate the error counter
-		AuditReport ar = new AuditReport("Move");
+		String auditName = "Move";
+		AuditReport ar = new AuditReport(auditName);
 		
-		// Check invariants
-		// ar.verify(_SomeExpression_, "_SomeExpression_ is true");
+		// Section 1 - Shallow Audit
+		if(scope < 1) return ar.falseInvariants();
+		Log.logMessage("--- Begin Shallow Audit [" + auditName + "] ---");
+		Log.logMessage("--- End Shallow Audit [" + auditName + "] ---");
+		
+		// Section 2 - Deep Audit
+		if(scope < 2) return ar.falseInvariants();
+		Log.logMessage("--- Begin Deep Audit [" + auditName + "] ---");
+		Log.logMessage("--- End Deep Audit [" + auditName + "] ---");
+		
+		// Section 3 - Instantiation Audit
+		if(scope < 3) return ar.falseInvariants();
+		Log.logMessage("--- Begin Instantiation Audit [" + auditName + "] ---");
+		Log.logMessage("--- End Instantiation Audit [" + auditName + "] ---");
 		
 		return ar.falseInvariants();
 	}
