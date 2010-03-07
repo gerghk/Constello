@@ -38,7 +38,7 @@ public class Star extends Circle {
 					
 					// Flash a green outline and return if this star is already nimmed
 					setStrokeColor("green");
-					new Animate(victim, "strokeopacity", 0.0, 1.0, 1000).start();
+					new Animate(victim, "strokeopacity", 0.0, 1.0, 500).start();
 					return;
 				}
 				
@@ -50,7 +50,7 @@ public class Star extends Circle {
 
 						// If not, flash a red outline and return
 						setStrokeColor("red");
-						new Animate(victim, "strokeopacity", 1.0, 0.0, 1000).start();
+						new Animate(victim, "strokeopacity", 1.0, 0.0, 500).start();
 						return;
 					}
 					else {

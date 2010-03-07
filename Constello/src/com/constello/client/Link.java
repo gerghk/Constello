@@ -35,13 +35,13 @@ public class Link extends Line {
 	/* Dim the link */
 	public void dim() {
 		
-		new Animate(this, "strokeopacity", getStrokeOpacity(), 0.0, 1000).start();
+		new Animate(this, "strokeopacity", getStrokeOpacity(), 0.0, 500).start();
 	}
 	
 	/* Glow the link */
 	public void glow() {
 		
-		new Animate(this, "strokeopacity", getStrokeOpacity(), 0.5, 1000).start();
+		new Animate(this, "strokeopacity", getStrokeOpacity(), 0.5, 500).start();
 	}
 
 	/* Audit interface */
