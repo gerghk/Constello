@@ -16,6 +16,16 @@
     <url-pattern>/constello/greet</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+  	<servlet-name>constelloServlet</servlet-name>
+  	<servlet-class>com.constello.server.ConstelloServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>constelloServlet</servlet-name>
+  	<url-pattern>/constello/server</url-pattern>
+  </servlet-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>Constello.html</welcome-file>

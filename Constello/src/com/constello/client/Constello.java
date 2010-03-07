@@ -159,8 +159,12 @@ public class Constello implements EntryPoint {
 		
 		final Button startButton = new Button("Start");
 		startButton.addClickHandler(new ClickHandler() {
+			
 			public void onClick(ClickEvent event) {
+				
 				cn.dimLinks();
+				cn.activeIs(true);
+				cn.nextMove.clear();
 			}
 		});
 		
@@ -172,4 +176,6 @@ public class Constello implements EntryPoint {
 		// Audit Constellation
 		int errs = cn.auditErrors(0);
 	}
+
+	private ConstelloServiceAsync _constelloSvc = GWT.create(ConstelloService.class);
 }

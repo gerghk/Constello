@@ -10,6 +10,16 @@ public class Move extends Stack<Star> {
 		super();
 	}
 	
+	@Override
+	public void clear() {
+		
+		while(!empty()) {
+			
+			Star s = pop();
+			s.nimmedIs(false);
+		}
+	}
+	
 	/* Audit interface */
 	public int auditErrors(int scope) {
 		

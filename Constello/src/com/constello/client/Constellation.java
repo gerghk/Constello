@@ -14,7 +14,6 @@ public class Constellation extends DrawingArea {
 		
 		// Call parent's constructor
 		super(width, height);
-		
 	}
 	
 	/* Add a Star to the Constellation */
@@ -23,7 +22,7 @@ public class Constellation extends DrawingArea {
 		add(s);
 		_stars.add(s);
 		s.parentIs(this);
-		++_numStars;
+		s.indexIs(_numStars++);
 	}
 	
 	/* Create a link between two stars */
@@ -49,8 +48,20 @@ public class Constellation extends DrawingArea {
 		}
 	}
 	
-	/* Execute _nextMove on the Constellation */
-	public Boolean nextMove() {
+	/* Getter for _active */
+	public Boolean active() {
+		
+		return _active;
+	}
+	
+	/* Setter for _active */
+	public void activeIs(Boolean active) {
+		
+		_active = active;
+	}
+	
+	/* Execute nextMove on the Constellation */
+	public Boolean makeMove() {
 		
 		// TODO
 		return true;
@@ -100,10 +111,13 @@ public class Constellation extends DrawingArea {
 		return ar.falseInvariants();
 	}
 
+	/* Protected members */
+	protected Move nextMove = new Move();
+	
 	/* Private members */
 	private List<Star> _stars = new ArrayList<Star>();
 	private List<Link> _links = new ArrayList<Link>();
-	private Move _nextMove = new Move();
 	private int _numStars = 0; // Redundant: for auditing _stars
 	private int _numLinks = 0; // Redundant: for auditing _links
+	private Boolean _active = false;
 }
