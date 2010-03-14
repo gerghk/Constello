@@ -25,12 +25,6 @@ public class Constellation extends DrawingArea {
 		s.indexIs(_numStars++);
 	}
 	
-	/* Check if this constellation contains the specified star */
-	Boolean hasStar(Star s) {
-		
-		return _stars.contains(s);
-	}
-	
 	/* Create a link between two stars */
 	public void linkStars(Star s1, Star s2) {
 		
@@ -41,12 +35,6 @@ public class Constellation extends DrawingArea {
 		_links.add(lk);
 		lk.parentIs(this);
 		++_numLinks;
-	}
-	
-	/* Check if this constellation contains the specified link */
-	Boolean hasLink(Link l) {
-		
-		return _links.contains(l);
 	}
 	
 	/* Slowly dim the links at beginning of round*/
@@ -96,8 +84,8 @@ public class Constellation extends DrawingArea {
 		// - check that _links.size() matches _numLinks
 		ar.verify(_links.size() == _numLinks, "Link list size matches link count");
 		// Invariant 1.3
-		// - check that getVectorObjectCount matches _numStars + _numLinks
-		ar.verify(getVectorObjectCount() == (_numStars + _numLinks), "Vector object count matches (star count + link count)");
+		// - check that getVectorObjectCount matches _numStars + _numLinks + 1
+		ar.verify(getVectorObjectCount() == (_numStars + _numLinks + 1), "Vector object count matches (star count + link count + 1)");
 		// Invariant 1.4
 		// - check that nextMove is empty if _active is false
 		ar.verify(_active || nextMove.empty(), "Constellation is either active or nextMove must be empty");
@@ -105,22 +93,56 @@ public class Constellation extends DrawingArea {
 		
 		// Section 2 - Deep Audit
 		if(scope < 2) return ar.falseInvariants();
-		Log.logMessage("--- Begin Deep Audit [" + auditName + "] ---"); 
-		// Invariant 2.1
-		// - every Star in _stars should have this Constellation as the parent
+		Log.logMessage("--- Begin Deep Audit [" + auditName + "] ---");
+		// Invariants for _stars
 		Iterator<Star> starListIt = _stars.iterator();
 		while(starListIt.hasNext()) {
 			
 			Star s = starListIt.next();
+			
+			// Invariant 2.1.a
+			// - every Star in _stars should have this Constellation as the parent
 			ar.verify(s.parent() == this, "Star child points back to correct Constellation parent");
+			// Invariant 2.1.b
+			// - each Star must not have more than _stars.size()-1 neighbors
+			ar.verify(s.numNeighbors() < _stars.size(), "Star child has less neighbors than the total number of stars");
+			// Invariant 2.1.c
+			// - each Star's neighbors must be contained in _stars
+			Iterator<Star> sIt = s.neighbors();
+			while(sIt.hasNext()) {
+				
+				Star nbr = sIt.next();
+				ar.verify(_stars.contains(nbr), "Star child's neighbors are also part of this Constellation");
+			}
+			// Invariant 2.1.d
+			// - each Star's links must be contained in _links
+			Iterator<Link> lIt = s.links();
+			while(lIt.hasNext()) {
+				
+				Link l = lIt.next();
+				ar.verify(_links.contains(l), "Star child's links are also part of this Constellation");
+			}
 		}
-		// Invariant 2.2
-		// - every Link in _links should have this Constellation as the parent
+		// Invariants for _links
 		Iterator<Link> linkListIt = _links.iterator();
 		while(linkListIt.hasNext()) {
 			
 			Link l = linkListIt.next();
+			
+			// Invariant 2.2.a
+			// - every Link in _links should have this Constellation as the parent
 			ar.verify(l.parent() == this, "Link child points back to correct Constellation parent");
+			// Invariant 2.2.b
+			// - each Link's stars must be contained in _stars
+			ar.verify(_stars.contains(l.s1()) && _stars.contains(l.s2()), "Link child's stars are also part of this Constellation");
+		}
+		// Invariant 2.3
+		// - Stars in nextMove must be contained in _stars
+		Iterator<Star> starStackIt = nextMove.iterator();
+		while(starStackIt.hasNext()) {
+			
+			Star s = starStackIt.next();
+			ar.verify(_stars.contains(s), "Stars in Move must also be part of this Constellation");
 		}
 		Log.logMessage("--- End Deep Audit [" + auditName + "] ---");
 		

@@ -38,6 +38,17 @@ public class Link extends Line {
 		return _s1 == s || _s2 == s;
 	}
 	
+	/* Getter for _s1 */
+	Star s1() {
+		
+		return _s1;
+	}
+	
+	/* Getter for _s2 */
+	Star s2() {
+		
+		return _s2;
+	}
 	
 	/* Dim the link */
 	public void dim() {
@@ -67,6 +78,9 @@ public class Link extends Line {
 		// Invariant 1.2
 		// - check that _s1 and _s2 are not null
 		ar.verify(_s1 != null && _s2 != null, "Linked stars are not null");
+		// Invariant 1.3
+		// _s1 != _s2
+		ar.verify(_s1 != _s2, "Linked stars are not the same star");
 		Log.logMessage("--- End Shallow Audit [" + auditName + "] ---");
 		
 		// Section 2 - Deep Audit

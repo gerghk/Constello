@@ -130,10 +130,34 @@ public class Star extends Circle {
 		return _neighbors.contains(s);
 	}
 	
+	/* Getter for _neighbors */
+	public Iterator<Star> neighbors() {
+		
+		return _neighbors.iterator();
+	}
+	
+	/* Getter for _numNeighbors */
+	public int numNeighbors() {
+		
+		return _numNeighbors;
+	}
+	
 	/* Check if the specified link exists for this star */
 	public Boolean hasLink(Link l) {
 		
 		return _links.containsValue(l);
+	}
+	
+	/* Getter for _links */
+	public Iterator<Link> links() {
+		
+		return _links.values().iterator();
+	}
+	
+	/* Getter for _numLinks */
+	public int numLinks() {
+		
+		return _numLinks;
 	}
 	
 	/* Audit interface */
@@ -164,26 +188,26 @@ public class Star extends Circle {
 		// Invariant 1.6
 		// - check that _links.size() matches _numLinks
 		ar.verify(_links.size() == _numLinks, "Link map size matches link count");
+		// Invariant 1.7
+		// - check that _numNeighbors equals _numLinks
+		ar.verify(_numNeighbors == _numLinks, "Number of neighbors equals number of links");
 		Log.logMessage("--- End Shallow Audit [" + auditName + "] ---");
 		
 		// Section 2 - Deep Audit
 		if(scope < 2) return ar.falseInvariants();
 		Log.logMessage("--- Begin Deep Audit [" + auditName + "] ---");
 		// Invariant 2.1
-		// - check that _parent contains this star
-		ar.verify(_parent.hasStar(this), "Parent contains this star");
-		// Invariant 2.2
 		// - check that each neighbor has this star as a neighbor and has the same link
-		Iterator<Star> neighborListIt = _neighbors.iterator();
+		Iterator<Star> neighborListIt = neighbors();
 		while(neighborListIt.hasNext()) {
 			
 			Star s = neighborListIt.next();
 			ar.verify(s.hasNeighbor(this), "Neighbor also has this star as neighbor");
 			ar.verify(s.hasLink(_links.get(s)), "Neighbor shares link with this star");
 		}
-		// Invariant 2.3
+		// Invariant 2.2
 		// - check that each link contains this star
-		Iterator<Link> linkMapIt = _links.values().iterator();
+		Iterator<Link> linkMapIt = links();
 		while(linkMapIt.hasNext()) {
 			
 			Link l = linkMapIt.next();

@@ -1,5 +1,6 @@
 package com.constello.client;
 
+import java.util.Iterator;
 import java.util.Stack;
 
 public class Move extends Stack<Star> {
@@ -35,6 +36,14 @@ public class Move extends Stack<Star> {
 		// Section 2 - Deep Audit
 		if(scope < 2) return ar.falseInvariants();
 		Log.logMessage("--- Begin Deep Audit [" + auditName + "] ---");
+		// Invariant 2.1
+		// - all Stars must be nimmed
+		Iterator<Star> stackIt = iterator();
+		while(stackIt.hasNext()) {
+			
+			Star s = stackIt.next();
+			ar.verify(s.nimmed(), "Star in Move must be nimmed");
+		}
 		Log.logMessage("--- End Deep Audit [" + auditName + "] ---");
 		
 		// Section 3 - Instantiation Audit

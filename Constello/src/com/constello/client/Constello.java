@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.vaadin.contrib.gwtgraphics.client.DrawingArea;
 import com.vaadin.contrib.gwtgraphics.client.Line;
 import com.vaadin.contrib.gwtgraphics.client.shape.Circle;
+import com.vaadin.contrib.gwtgraphics.client.shape.Rectangle;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -47,6 +48,12 @@ public class Constello implements EntryPoint {
 		// Create Constellation
 		final Constellation cn = new Constellation(400, 400);
 		RootPanel.get("boardContainer").add(cn);
+		
+		// Create background
+		// TODO - Move this to Level constructors
+		Rectangle bg = new Rectangle(0, 0, 400, 400);
+		bg.setFillColor("black");
+		cn.add(bg);
 		
 		// Add stars to Constellation
 		// TODO - Move this to Level constructors
