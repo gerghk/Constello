@@ -119,7 +119,9 @@ public class Star extends Circle {
 	public void addNeighbor(Star nbr, Link lnk) {
 		
 		_neighbors.add(nbr);
+		_numNeighbors++;
 		_links.put(nbr, lnk);
+		_numLinks++;
 	}
 	
 	/* Check if the specified star is a neighbor */
@@ -144,23 +146,59 @@ public class Star extends Circle {
 		// Section 1 - Shallow Audit
 		if(scope < 1) return ar.falseInvariants();
 		Log.logMessage("--- Begin Shallow Audit [" + auditName + "] ---");
+		// Invariant 1.1
+		// - check that _parent is not null
+		ar.verify(_parent != null, "Parent is not null");
+		// Invariant 1.2
+		// - check that _index is set (and not negative)
+		ar.verify(_index > -1, "Index is set and not negative");
+		// Invariant 1.3
+		// - check that this star has neighbors
+		ar.verify(!_neighbors.isEmpty(), "This star has neighbors");
+		// Invariant 1.4
+		// - check that this star has links
+		ar.verify(!_links.isEmpty(), "This star has links");
+		// Invariant 1.5
+		// - check that _neighbors.size() matches _numNeighbors
+		ar.verify(_neighbors.size() == _numNeighbors, "Neighbor list size matches neighbor count");
+		// Invariant 1.6
+		// - check that _links.size() matches _numLinks
+		ar.verify(_links.size() == _numLinks, "Link map size matches link count");
 		Log.logMessage("--- End Shallow Audit [" + auditName + "] ---");
 		
 		// Section 2 - Deep Audit
 		if(scope < 2) return ar.falseInvariants();
 		Log.logMessage("--- Begin Deep Audit [" + auditName + "] ---");
+		// Invariant 2.1
+		// - check that _parent contains this star
+		ar.verify(_parent.hasStar(this), "Parent contains this star");
+		// Invariant 2.2
+		// - check that each neighbor has this star as a neighbor and has the same link
+		Iterator<Star> neighborListIt = _neighbors.iterator();
+		while(neighborListIt.hasNext()) {
+			
+			Star s = neighborListIt.next();
+			ar.verify(s.hasNeighbor(this), "Neighbor also has this star as neighbor");
+			ar.verify(s.hasLink(_links.get(s)), "Neighbor shares link with this star");
+		}
+		// Invariant 2.3
+		// - check that each link contains this star
+		Iterator<Link> linkMapIt = _links.values().iterator();
+		while(linkMapIt.hasNext()) {
+			
+			Link l = linkMapIt.next();
+			ar.verify(l.hasStar(this), "Link contains this star");
+		}
 		Log.logMessage("--- End Deep Audit [" + auditName + "] ---");
 		
 		// Section 3 - Instantiation Audit
-		if(scope < 3) return ar.falseInvariants();
-		Log.logMessage("--- Begin Instantiation Audit [" + auditName + "] ---");
-		Log.logMessage("--- End Instantiation Audit [" + auditName + "] ---");
+		// This class does not instantiate any objects
 		
 		return ar.falseInvariants();
 	}
 
 	/* Private members */
-	private int _index; // Used as unique id for server communication, corresponds to index in parent's _stars
+	private int _index = -1; // Used as unique id for server communication, corresponds to index in parent's _stars
 	private List<Star> _neighbors = new ArrayList<Star>();
 	private Map<Star, Link> _links = new HashMap<Star, Link>();
 	private Constellation _parent = null;

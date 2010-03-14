@@ -32,6 +32,13 @@ public class Link extends Line {
 		_parent = c;
 	}
 	
+	/* Check if this link connects to the specified star */
+	Boolean hasStar(Star s) {
+		
+		return _s1 == s || _s2 == s;
+	}
+	
+	
 	/* Dim the link */
 	public void dim() {
 		
@@ -57,17 +64,24 @@ public class Link extends Line {
 		// Invariant 1.1
 		// - check that _parent is not null
 		ar.verify(_parent != null, "Parent is not null");
+		// Invariant 1.2
+		// - check that _s1 and _s2 are not null
+		ar.verify(_s1 != null && _s2 != null, "Linked stars are not null");
 		Log.logMessage("--- End Shallow Audit [" + auditName + "] ---");
 		
 		// Section 2 - Deep Audit
 		if(scope < 2) return ar.falseInvariants();
 		Log.logMessage("--- Begin Deep Audit [" + auditName + "] ---");
+		// Invariant 2.1
+		// - check that _s1 and _s2 contain this link
+		ar.verify(_s1.hasLink(this) && _s2.hasLink(this), "Linked stars contain this link");
+		// Invariant 2.2
+		// - check that _s1 and _s2 are neighbors
+		ar.verify(_s1.hasNeighbor(_s2) && _s2.hasNeighbor(_s1), "Linked stars are neighbors");
 		Log.logMessage("--- End Deep Audit [" + auditName + "] ---");
 		
 		// Section 3 - Instantiation Audit
-		if(scope < 3) return ar.falseInvariants();
-		Log.logMessage("--- Begin Instantiation Audit [" + auditName + "] ---");
-		Log.logMessage("--- End Instantiation Audit [" + auditName + "] ---");
+		// This class does not instantiate any objects
 		
 		return ar.falseInvariants();
 	}

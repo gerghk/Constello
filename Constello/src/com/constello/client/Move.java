@@ -38,9 +38,7 @@ public class Move extends Stack<Star> {
 		Log.logMessage("--- End Deep Audit [" + auditName + "] ---");
 		
 		// Section 3 - Instantiation Audit
-		if(scope < 3) return ar.falseInvariants();
-		Log.logMessage("--- Begin Instantiation Audit [" + auditName + "] ---");
-		Log.logMessage("--- End Instantiation Audit [" + auditName + "] ---");
+		// This class does not instantiate any objects
 		
 		return ar.falseInvariants();
 	}

@@ -25,6 +25,12 @@ public class Constellation extends DrawingArea {
 		s.indexIs(_numStars++);
 	}
 	
+	/* Check if this constellation contains the specified star */
+	Boolean hasStar(Star s) {
+		
+		return _stars.contains(s);
+	}
+	
 	/* Create a link between two stars */
 	public void linkStars(Star s1, Star s2) {
 		
@@ -35,6 +41,12 @@ public class Constellation extends DrawingArea {
 		_links.add(lk);
 		lk.parentIs(this);
 		++_numLinks;
+	}
+	
+	/* Check if this constellation contains the specified link */
+	Boolean hasLink(Link l) {
+		
+		return _links.contains(l);
 	}
 	
 	/* Slowly dim the links at beginning of round*/
@@ -61,10 +73,10 @@ public class Constellation extends DrawingArea {
 	}
 	
 	/* Execute nextMove on the Constellation */
-	public Boolean makeMove() {
+	public void makeMove() {
 		
-		// TODO
-		return true;
+		
+		return;
 	}
 	
 	/* Audit interface */
