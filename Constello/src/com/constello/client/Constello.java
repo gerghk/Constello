@@ -46,61 +46,53 @@ public class Constello implements EntryPoint {
 	public void onModuleLoad() {
 		
 		// Create Constellation
-		final Constellation cn = new Constellation(400, 400);
+		final Constellation cn = new Orion();
 		RootPanel.get("boardContainer").add(cn);
 		
-		// Create background
-		// TODO - Move this to Level constructors
-		Rectangle bg = new Rectangle(0, 0, 400, 400);
-		bg.setFillColor("black");
-		cn.add(bg);
-		
-		// Add stars to Constellation
-		// TODO - Move this to Level constructors
-		Star s1 = new Star(200, 200, 15);
-		Star s2 = new Star(300, 200, 20);
-		Star s3 = new Star(100, 100, 25);
-		cn.addStar(s1);
-		cn.addStar(s2);
-		cn.addStar(s3);
-		cn.linkStars(s1, s2);
-		cn.linkStars(s2, s3);
-		
+		// Game control buttons
 		final Button startButton = new Button("Start");
+		final Button goButton = new Button("Make Move");
 		startButton.addClickHandler(new ClickHandler() {
 			
 			public void onClick(ClickEvent event) {
 				
 				startButton.setText("Start Over");
+				goButton.setEnabled(true);
 				cn.dimLinks();
 				cn.activeIs(true);
 				cn.nextMove.clear();
 			}
 		});
-		RootPanel.get("boardContainer").add(startButton);
-		
-		final Button goButton = new Button("Go");
+		RootPanel.get("gameControl").add(startButton);
 		goButton.addClickHandler(new ClickHandler() {
 			
 			public void onClick(ClickEvent event) {
 				
-				cn.makeMove();
+				Boolean result = cn.makeMove();
+				if(result) {
+					
+					startButton.setEnabled(false);
+					goButton.setEnabled(false);
+				}
 			}
 		});
-		RootPanel.get("boardContainer").add(goButton);
+		goButton.setEnabled(false);
+		RootPanel.get("gameControl").add(goButton);
 		
 		// Initialize Log Buffer
 		Log.Initialize();
 		
+		// Drop-down select for audit scope
 		final ListBox scopeSel = new ListBox();
 		scopeSel.addItem("1");
 		scopeSel.addItem("2");
 		scopeSel.addItem("3");
 		scopeSel.addItem("4");
 		scopeSel.setVisibleItemCount(1);
-		RootPanel.get("logContainer").add(new Label("Scope: "));
-		RootPanel.get("logContainer").add(scopeSel);
+		RootPanel.get("auditControl").add(new Label("Scope: "));
+		RootPanel.get("auditControl").add(scopeSel);
 		
+		// Audit button
 		final Button auditButton = new Button("Audit");
 		auditButton.addClickHandler(new ClickHandler() {
 			
@@ -110,10 +102,18 @@ public class Constello implements EntryPoint {
 				cn.auditErrors(auditScope);
 			}
 		});
-		RootPanel.get("logContainer").add(auditButton);
+		RootPanel.get("auditControl").add(auditButton);
 		
-		// Audit Constellation
-		//int errs = cn.auditErrors(4);
+		// Clear button
+		final Button clearButton = new Button("Clear");
+		clearButton.addClickHandler(new ClickHandler() {
+			
+			public void onClick(ClickEvent event) {
+				
+				Log.clear();
+			}
+		});
+		RootPanel.get("auditControl").add(clearButton);
 	}
 
 	private ConstelloServiceAsync _constelloSvc = GWT.create(ConstelloService.class);

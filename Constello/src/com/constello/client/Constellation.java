@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.vaadin.contrib.gwtgraphics.client.DrawingArea;
 import com.vaadin.contrib.gwtgraphics.client.animation.Animate;
+import com.vaadin.contrib.gwtgraphics.client.shape.Rectangle;
+import com.vaadin.contrib.gwtgraphics.client.shape.Text;
 
 public class Constellation extends DrawingArea {
 
@@ -14,6 +16,11 @@ public class Constellation extends DrawingArea {
 		
 		// Call parent's constructor
 		super(width, height);
+		
+		// Set the background
+		Rectangle bg = new Rectangle(0, 0, 400, 400);
+		bg.setFillColor("black");
+		add(bg);
 	}
 	
 	/* Add a Star to the Constellation */
@@ -61,10 +68,31 @@ public class Constellation extends DrawingArea {
 	}
 	
 	/* Execute nextMove on the Constellation */
-	public void makeMove() {
+	public Boolean makeMove() {
 		
+		dimLinks();
 		
-		return;
+		// Dim the selected stars to indicate they have been nimmed
+		while(!nextMove.empty()) {
+			
+			Star s = nextMove.pop();
+			new Animate(s, "fillopacity", 1.0, 0.5, 1000).start();
+			_numNimmed++;
+		}
+		
+		if(_numNimmed == _numStars) {
+			
+			activeIs(false);
+			Text gameover = new Text(100, 300, "Congratulations, You Win!");
+			gameover.setStrokeColor("yellow");
+			add(gameover);
+			new Animate(gameover, "strokeopacity", 0.0, 1.0, 1000).start();
+			return true;
+		}
+		else {
+		
+			return false;
+		}
 	}
 	
 	/* Audit interface */
@@ -85,6 +113,7 @@ public class Constellation extends DrawingArea {
 		ar.verify(_links.size() == _numLinks, "Link list size matches link count");
 		// Invariant 1.3
 		// - check that getVectorObjectCount matches _numStars + _numLinks + 1
+		// TODO - this is broken after the game is over since the text adds 1 to getVectorObjectCount
 		ar.verify(getVectorObjectCount() == (_numStars + _numLinks + 1), "Vector object count matches (star count + link count + 1)");
 		// Invariant 1.4
 		// - check that nextMove is empty if _active is false
@@ -96,6 +125,7 @@ public class Constellation extends DrawingArea {
 		Log.logMessage("--- Begin Deep Audit [" + auditName + "] ---");
 		// Invariants for _stars
 		Iterator<Star> starListIt = _stars.iterator();
+		int nimmedStars = 0;
 		while(starListIt.hasNext()) {
 			
 			Star s = starListIt.next();
@@ -122,7 +152,12 @@ public class Constellation extends DrawingArea {
 				Link l = lIt.next();
 				ar.verify(_links.contains(l), "Star child's links are also part of this Constellation");
 			}
+			
+			if(s.nimmed()) nimmedStars++;
 		}
+		// Invariant 2.1.e
+		// - check that _numNimmed + nextMove.size() matches the number of nimmed stars
+		ar.verify((_numNimmed + nextMove.size()) == nimmedStars, "Number of nimmed stars matches count");
 		// Invariants for _links
 		Iterator<Link> linkListIt = _links.iterator();
 		while(linkListIt.hasNext()) {
@@ -187,5 +222,6 @@ public class Constellation extends DrawingArea {
 	private List<Link> _links = new ArrayList<Link>();
 	private int _numStars = 0; // Redundant: for auditing _stars
 	private int _numLinks = 0; // Redundant: for auditing _links
+	private int _numNimmed = 0;
 	private Boolean _active = false;
 }

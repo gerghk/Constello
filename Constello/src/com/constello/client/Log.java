@@ -7,25 +7,13 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author gerghk
  *
  */
-public class Log extends ScrollPanel {
+public class Log {
 
-	/* Default Constructor */
-	public Log() {
-		// TODO Auto-generated constructor stub
-	}
-
-	/* Constructor which takes an initial child */
-	public Log(Widget child) {
-		super(child);
-		// TODO Auto-generated constructor stub
-	}
-	
 	/* Initialize log and attach to RootPanel::logContainer */
 	public static void Initialize() {
 		
@@ -42,6 +30,12 @@ public class Log extends ScrollPanel {
 		Label logmsg = new Label(msg + "\n");
 		Buffer.add(logmsg);
 		Scroller.ensureVisible(logmsg);
+	}
+	
+	/* Clear the log buffer */
+	public static void clear() {
+		
+		Buffer.clear();
 	}
 
 	private static VerticalPanel Buffer;
