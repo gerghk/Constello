@@ -36,8 +36,7 @@ public class Star extends Circle {
 				if(!_parent.active()) return; // Return if parent is not active
 				else if(nimmed()) {
 					
-					// Flash a green outline and return if this star is already nimmed
-					setStrokeColor("green");
+					// Flash its green outline and return if this star is already nimmed
 					new Animate(victim, "strokeopacity", 0.0, 1.0, 500).start();
 					return;
 				}

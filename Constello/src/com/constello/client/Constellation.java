@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.constello.client.Constello.gameMode;
+import com.google.gwt.user.client.Random;
 import com.vaadin.contrib.gwtgraphics.client.DrawingArea;
 import com.vaadin.contrib.gwtgraphics.client.animation.Animate;
 import com.vaadin.contrib.gwtgraphics.client.shape.Rectangle;
@@ -12,6 +13,56 @@ import com.vaadin.contrib.gwtgraphics.client.shape.Text;
 
 public class Constellation extends DrawingArea {
 
+	/* Simple Computer Opponent */
+	private void cpuMove() {
+
+		Iterator<Star> starListIterator = _stars.iterator();
+		Star startPoint = null;
+		// Just find the first star that is not nimmed yet
+		while(starListIterator.hasNext()) {
+
+			startPoint = starListIterator.next();
+			if(!startPoint.nimmed()) break;
+		}
+
+		// Nim startPoint
+		startPoint.nimmedIs(true);
+		nextMove.push(startPoint);
+		
+		// Nim up to a random number of stars between 0 and (_numStars - _numNimmed - 2)
+		// (obviously need to stop when nextMove.peek() has no more unnimmed neighbors)
+		int targetRemoved = Random.nextInt(_numStars - _numNimmed - 2);
+		for(int i=0; i!=targetRemoved; ++i) {
+			
+			Iterator<Star> nbrs = nextMove.peek().neighbors();
+			// Iterate through nextMove.peek()'s neighbors to find an unnimmed star
+			Boolean victimFound = false;
+			while(nbrs.hasNext()) {
+				
+				Star victim = nbrs.next();
+				if(!victim.nimmed()) {
+					
+					// Nim the unnimmed neighbor
+					victim.nimmedIs(true);
+					nextMove.push(victim);
+					victimFound = true;
+					break;
+				}
+			}
+			
+			// Break if no more unnimmed neighbors can be found
+			if(!victimFound) break;
+		}
+		
+		// Dim the selected stars to indicate they have been nimmed
+		while(!nextMove.empty()) {
+			
+			Star s = nextMove.pop();
+			new Animate(s, "fillopacity", 1.0, 0.5, 1000).start();
+			_numNimmed++;
+		}
+	}
+	
 	/* Default Constructor */
 	public Constellation(int width, int height, gameMode mode) {
 		
@@ -84,19 +135,58 @@ public class Constellation extends DrawingArea {
 			_numNimmed++;
 		}
 		
-		if(_numNimmed == _numStars) {
+		if(_mode == gameMode.SOLO) {
 			
-			activeIs(false);
-			Text gameover = new Text(100, 300, "Congratulations, You Win!");
-			gameover.setStrokeColor("yellow");
-			add(gameover);
-			new Animate(gameover, "strokeopacity", 0.0, 1.0, 1000).start();
-			return true;
+			if(_numNimmed == _numStars) {
+
+				activeIs(false);
+				Text gameover = new Text(100, 300, "Congratulations, You Win!");
+				gameover.setStrokeColor("yellow");
+				add(gameover);
+				new Animate(gameover, "strokeopacity", 0.0, 1.0, 1000).start();
+				return true;
+			}
 		}
-		else {
+		else if(_mode == gameMode.CPU){
 		
-			return false;
+			// If player left the last star for CPU, he wins
+			if(_numNimmed == (_numStars - 1)) {
+				
+				activeIs(false);
+				Text gameover = new Text(100, 300, "Congratulations, you won!");
+				gameover.setStrokeColor("yellow");
+				add(gameover);
+				new Animate(gameover, "strokeopacity", 0.0, 1.0, 1000).start();
+				return true;
+			}
+			// If stupid player removed all the stars, he loses
+			else if(_numNimmed == _numStars) {
+				
+				activeIs(false);
+				Text gameover = new Text(100, 300, "You lost, now why did you remove all the stars?");
+				gameover.setStrokeColor("red");
+				add(gameover);
+				new Animate(gameover, "strokeopacity", 0.0, 1.0, 1000).start();
+				return true;
+			}
+			// Otherwise, let the CPU opponent make its move
+			else {
+				
+				cpuMove();
+				// If CPU left the last star for player, player loses
+				if(_numNimmed == (_numStars - 1)) {
+					
+					activeIs(false);
+					Text gameover = new Text(100, 300, "You lost to the computer");
+					gameover.setStrokeColor("red");
+					add(gameover);
+					new Animate(gameover, "strokeopacity", 0.0, 1.0, 1000).start();
+					return true;
+				}
+			}
 		}
+		
+		return false;
 	}
 	
 	/* Audit interface */
