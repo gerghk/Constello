@@ -1,11 +1,13 @@
 package com.constello.client;
 
+import com.constello.client.Constello.gameMode;
+
 class Orion extends Constellation {
 
-	public Orion() {
+	public Orion(gameMode mode) {
 		
 		// Call parent's constructor
-		super(400, 400);
+		super(400, 400, mode);
 		
 		// Add stars
 		Star s1 = new Star(110, 30, 10);

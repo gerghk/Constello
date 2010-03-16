@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.constello.client.Constello.gameMode;
 import com.vaadin.contrib.gwtgraphics.client.DrawingArea;
 import com.vaadin.contrib.gwtgraphics.client.animation.Animate;
 import com.vaadin.contrib.gwtgraphics.client.shape.Rectangle;
@@ -12,7 +13,7 @@ import com.vaadin.contrib.gwtgraphics.client.shape.Text;
 public class Constellation extends DrawingArea {
 
 	/* Default Constructor */
-	public Constellation(int width, int height) {
+	public Constellation(int width, int height, gameMode mode) {
 		
 		// Call parent's constructor
 		super(width, height);
@@ -21,6 +22,9 @@ public class Constellation extends DrawingArea {
 		Rectangle bg = new Rectangle(0, 0, 400, 400);
 		bg.setFillColor("black");
 		add(bg);
+		
+		// Set the game mode
+		_mode = mode;
 	}
 	
 	/* Add a Star to the Constellation */
@@ -224,4 +228,5 @@ public class Constellation extends DrawingArea {
 	private int _numLinks = 0; // Redundant: for auditing _links
 	private int _numNimmed = 0;
 	private Boolean _active = false;
+	private gameMode _mode;
 }
