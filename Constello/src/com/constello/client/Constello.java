@@ -27,24 +27,11 @@ import com.vaadin.contrib.gwtgraphics.client.shape.Rectangle;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class Constello implements EntryPoint {
-	/**
-	 * The message displayed to the user when the server cannot be reached or
-	 * returns an error.
-	 */
-	private static final String SERVER_ERROR = "An error occurred while "
-			+ "attempting to contact the server. Please check your network "
-			+ "connection and try again.";
-	
+
 	protected enum gameMode {
-		SOLO, CPU, VS
+		SOLO, CPU
 	}
-
-	/**
-	 * Create a remote service proxy to talk to the server-side Greeting service.
-	 */
-	private final GreetingServiceAsync greetingService = GWT
-			.create(GreetingService.class);
-
+	
 	/**
 	 * This is the entry point method.
 	 */
@@ -64,14 +51,16 @@ public class Constello implements EntryPoint {
 		final ListBox modeSel = new ListBox();
 		modeSel.addItem("Solo play");
 		modeSel.addItem("Computer Opponent");
-		modeSel.addItem("Human Opponent");
 		modeSel.setVisibleItemCount(1);
 		menuBar.add(new Label("Game Mode: "));
 		menuBar.add(modeSel);
 		
 		// Level select
 		final ListBox levelSel = new ListBox();
+		levelSel.addItem("Hercules");
 		levelSel.addItem("Orion");
+		levelSel.addItem("Sagittarius");
+		levelSel.addItem("Ursa Major");
 		levelSel.setVisibleItemCount(1);
 		menuBar.add(new Label("Level: "));
 		menuBar.add(levelSel);
@@ -92,19 +81,30 @@ public class Constello implements EntryPoint {
 					
 					mode = gameMode.SOLO;
 				}
-				else if(selectedMode.equals("Computer Opponent")) {
+				else {
 					
 					mode = gameMode.CPU;
 				}
-				else {
-					
-					mode = gameMode.VS;
-				}
 				
 				String selectedLevel = levelSel.getValue(levelSel.getSelectedIndex());
-				if(selectedLevel.equals("Orion")) {
+				if(selectedLevel.equals("Hercules")) {
+					
+					cn = new Hercules(mode);
+					cn.parentIs(me);
+				}
+				else if(selectedLevel.equals("Orion")) {
 					
 					cn = new Orion(mode);
+					cn.parentIs(me);
+				}
+				else if(selectedLevel.equals("Sagittarius")) {
+					
+					cn = new Sagittarius(mode);
+					cn.parentIs(me);
+				}
+				else if(selectedLevel.equals("Ursa Major")) {
+					
+					cn = new Ursamajor(mode);
 					cn.parentIs(me);
 				}
 				
@@ -188,7 +188,6 @@ public class Constello implements EntryPoint {
 		goButton.setEnabled(active);
 	}
 
-	private ConstelloServiceAsync _constelloSvc = GWT.create(ConstelloService.class);
 	private Constellation cn = new Constellation(400, 400, gameMode.SOLO);
 	private Button startButton;
 	private Button goButton;

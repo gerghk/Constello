@@ -17,7 +17,7 @@ public class Link extends Line {
 		
 		// Set graphical properties
 		setStrokeColor("yellow");
-		setStrokeWidth(2);
+		setStrokeWidth(1);
 	}
 	
 	/* Getter for _parent */

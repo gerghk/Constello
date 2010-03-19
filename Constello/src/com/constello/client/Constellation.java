@@ -7,7 +7,11 @@ import java.util.List;
 import com.constello.client.Constello.gameMode;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Random;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.vaadin.contrib.gwtgraphics.client.DrawingArea;
 import com.vaadin.contrib.gwtgraphics.client.animation.Animate;
 import com.vaadin.contrib.gwtgraphics.client.shape.Rectangle;
@@ -17,52 +21,85 @@ public class Constellation extends DrawingArea {
 
 	/* Simple Computer Opponent */
 	private void cpuMove() {
-
-		Iterator<Star> starListIterator = _stars.iterator();
-		Star startPoint = null;
-		// Just find the first star that is not nimmed yet
-		while(starListIterator.hasNext()) {
-
-			startPoint = starListIterator.next();
-			if(!startPoint.nimmed()) break;
-		}
-
-		// Nim startPoint
-		startPoint.nimmedIs(true);
-		nextMove.push(startPoint);
 		
-		// Nim up to a random number of stars between 0 and (_numStars - _numNimmed - 2)
-		// (obviously need to stop when nextMove.peek() has no more unnimmed neighbors)
-		int targetRemoved = Random.nextInt(_numStars - _numNimmed - 2);
-		for(int i=0; i!=targetRemoved; ++i) {
-			
-			Iterator<Star> nbrs = nextMove.peek().neighbors();
-			// Iterate through nextMove.peek()'s neighbors to find an unnimmed star
-			Boolean victimFound = false;
-			while(nbrs.hasNext()) {
+		// Fake timer for CPU thinking
+		Timer fakeCPUTimer = new Timer() {
+
+			@Override
+			public void run() {
 				
-				Star victim = nbrs.next();
-				if(!victim.nimmed()) {
+				Iterator<Star> starListIterator = _stars.iterator();
+				Star startPoint = null;
+				int numToSkip = Random.nextInt(_numStars - _numNimmed - 1);
+				// Randomly pick an unnimmed star to start from
+				while(starListIterator.hasNext()) {
+
+					startPoint = starListIterator.next();
+					if(!startPoint.nimmed() && (numToSkip-- == 0)) break;
+				}
+
+				// Nim startPoint
+				startPoint.nimmedIs(true);
+				nextMove.push(startPoint);
+				
+				// Nim up to a random number of stars between 0 and (_numStars - _numNimmed - 2)
+				// (obviously need to stop when nextMove.peek() has no more unnimmed neighbors)
+				int targetRemoved = Random.nextInt(_numStars - _numNimmed - 2);
+				// Make it a little smarter, if there are less than 5 stars, go for the win
+				if((_numStars - _numNimmed) < 5) targetRemoved = _numStars - _numNimmed - 2;
+				for(int i=0; i!=targetRemoved; ++i) {
 					
-					// Nim the unnimmed neighbor
-					victim.nimmedIs(true);
-					nextMove.push(victim);
-					victimFound = true;
-					break;
+					Iterator<Star> nbrs = nextMove.peek().neighbors();
+					// Iterate through nextMove.peek()'s neighbors to find an unnimmed star
+					Boolean victimFound = false;
+					while(nbrs.hasNext()) {
+						
+						Star victim = nbrs.next();
+						if(!victim.nimmed()) {
+							
+							// Nim the unnimmed neighbor
+							victim.nimmedIs(true);
+							nextMove.push(victim);
+							victimFound = true;
+							break;
+						}
+					}
+					
+					// Break if no more unnimmed neighbors can be found
+					if(!victimFound) break;
+				}
+				
+				// Hide the CPU thinking message
+				cpuThinking.hide();
+				
+				// Dim the selected stars to indicate they have been nimmed
+				while(!nextMove.empty()) {
+					
+					Star s = nextMove.pop();
+					new Animate(s, "fillopacity", 1.0, 0.5, 1000).start();
+					_numNimmed++;
+				}
+				
+				// If CPU left the last star for player, player loses
+				if(_numNimmed == (_numStars - 1)) {
+					
+					activeIs(false);
+					Text gameover = new Text(100, 300, "You lost to the computer");
+					gameover.setStrokeColor("red");
+					add(gameover);
+					new Animate(gameover, "strokeopacity", 0.0, 1.0, 1000).start();
+				}
+				// Otherwise, it's the player's turn
+				else {
+					
+					activeIs(true);
 				}
 			}
-			
-			// Break if no more unnimmed neighbors can be found
-			if(!victimFound) break;
-		}
+		};
 		
-		// Dim the selected stars to indicate they have been nimmed
-		while(!nextMove.empty()) {
-			
-			Star s = nextMove.pop();
-			new Animate(s, "fillopacity", 1.0, 0.5, 1000).start();
-			_numNimmed++;
-		}
+		// Show the CPU thinking message and set the timer
+		cpuThinking.center();
+		fakeCPUTimer.schedule(6000);
 	}
 	
 	/* Default Constructor */
@@ -76,6 +113,10 @@ public class Constellation extends DrawingArea {
 		bg.setFillColor("black");
 		add(bg);
 		
+		// Add the cpu thinking message
+		cpuThinking.setText("Please wait...");
+		cpuThinking.add(new Label("Computer is thinking"));
+		
 		// Set the game mode
 		_mode = mode;
 	}
@@ -86,7 +127,7 @@ public class Constellation extends DrawingArea {
 		add(s);
 		_stars.add(s);
 		s.parentIs(this);
-		s.indexIs(_numStars++);
+		++_numStars;
 	}
 	
 	/* Create a link between two stars */
@@ -151,7 +192,7 @@ public class Constellation extends DrawingArea {
 				return true;
 			}
 		}
-		else if(_mode == gameMode.CPU){
+		else {
 		
 			// If player left the last star for CPU, he wins
 			if(_numNimmed == (_numStars - 1)) {
@@ -161,7 +202,6 @@ public class Constellation extends DrawingArea {
 				gameover.setStrokeColor("yellow");
 				add(gameover);
 				new Animate(gameover, "strokeopacity", 0.0, 1.0, 1000).start();
-				return true;
 			}
 			// If stupid player removed all the stars, he loses
 			else if(_numNimmed == _numStars) {
@@ -171,43 +211,13 @@ public class Constellation extends DrawingArea {
 				gameover.setStrokeColor("red");
 				add(gameover);
 				new Animate(gameover, "strokeopacity", 0.0, 1.0, 1000).start();
-				return true;
 			}
 			// Otherwise, let the CPU opponent make its move
 			else {
 				
 				cpuMove();
-				// If CPU left the last star for player, player loses
-				if(_numNimmed == (_numStars - 1)) {
-					
-					activeIs(false);
-					Text gameover = new Text(100, 300, "You lost to the computer");
-					gameover.setStrokeColor("red");
-					add(gameover);
-					new Animate(gameover, "strokeopacity", 0.0, 1.0, 1000).start();
-					return true;
-				}
 			}
-		}
-		else if(_mode == gameMode.VS){
-			
-			AsyncCallback<int[]> callback = new AsyncCallback<int[]>() {
-
-				public void onFailure(Throwable caught) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				public void onSuccess(int[] counter) {
-					// TODO Auto-generated method stub
-					Log.logMessage("wtfbbq " + counter[0] + " " + counter[1]);
-				}
-			};
-			int dumbArray[] = new int[3];
-			dumbArray[0] = 2;
-			dumbArray[1] = 3;
-			dumbArray[2] = 4;
-			_constelloSvc.sendMove(dumbArray, callback);
+			return true;
 		}
 		
 		return false;
@@ -356,7 +366,7 @@ public class Constellation extends DrawingArea {
 	private int _numNimmed = 0;
 	private Boolean _active = false;
 	private gameMode _mode;
-	private ConstelloServiceAsync _constelloSvc = GWT.create(ConstelloService.class);
 	private Constello _parent = null;
 	private int _numMoves = 0;
+	private DialogBox cpuThinking = new DialogBox(false);
 }

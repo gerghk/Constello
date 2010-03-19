@@ -67,18 +67,6 @@ public class Star extends Circle {
 		
 	}
 	
-	/* Getter for _index */
-	public int index() {
-		
-		return _index;
-	}
-	
-	/* Setter for _index */
-	public void indexIs(int i) {
-		
-		_index = i;
-	}
-	
 	/* Getter for _parent */
 	public Constellation parent() {
 		
@@ -174,21 +162,18 @@ public class Star extends Circle {
 		// - check that _parent is not null
 		ar.verify(_parent != null, "Parent is not null");
 		// Invariant 1.2
-		// - check that _index is set (and not negative)
-		ar.verify(_index > -1, "Index is set and not negative");
-		// Invariant 1.3
 		// - check that this star has neighbors
 		ar.verify(!_neighbors.isEmpty(), "This star has neighbors");
-		// Invariant 1.4
+		// Invariant 1.3
 		// - check that this star has links
 		ar.verify(!_links.isEmpty(), "This star has links");
-		// Invariant 1.5
+		// Invariant 1.4
 		// - check that _neighbors.size() matches _numNeighbors
 		ar.verify(_neighbors.size() == _numNeighbors, "Neighbor list size matches neighbor count");
-		// Invariant 1.6
+		// Invariant 1.5
 		// - check that _links.size() matches _numLinks
 		ar.verify(_links.size() == _numLinks, "Link map size matches link count");
-		// Invariant 1.7
+		// Invariant 1.6
 		// - check that _numNeighbors equals _numLinks
 		ar.verify(_numNeighbors == _numLinks, "Number of neighbors equals number of links");
 		Log.logMessage("--- End Shallow Audit [" + auditName + "] ---");
@@ -222,7 +207,6 @@ public class Star extends Circle {
 	}
 
 	/* Private members */
-	private int _index = -1; // Used as unique id for server communication, corresponds to index in parent's _stars
 	private List<Star> _neighbors = new ArrayList<Star>();
 	private Map<Star, Link> _links = new HashMap<Star, Link>();
 	private Constellation _parent = null;
