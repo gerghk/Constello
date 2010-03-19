@@ -52,6 +52,7 @@ public class Constello implements EntryPoint {
 		
 		// Create Constellation
 		cn = new Constellation(400, 400, gameMode.SOLO);
+		cn.parentIs(this);
 		RootPanel.get("boardContainer").add(cn);
 		
 		// Menu Bar
@@ -78,7 +79,9 @@ public class Constello implements EntryPoint {
 		// Load button
 		final Button loadButton = new Button("Load");
 		// Also need to forward declare startButton
-		final Button startButton = new Button("Start");
+		startButton = new Button("Start");
+		// Click handler doesn't see this
+		final Constello me = this;
 		loadButton.addClickHandler(new ClickHandler() {
 			
 			public void onClick(ClickEvent event) {
@@ -102,6 +105,7 @@ public class Constello implements EntryPoint {
 				if(selectedLevel.equals("Orion")) {
 					
 					cn = new Orion(mode);
+					cn.parentIs(me);
 				}
 				
 				RootPanel.get("boardContainer").clear();
@@ -113,14 +117,14 @@ public class Constello implements EntryPoint {
 		menuBar.add(loadButton);
 		
 		// Game control buttons
-		startButton.setEnabled(false);
-		final Button goButton = new Button("Make Move");
+		startButton.setEnabled(false); // Initially disabled
+		goButton = new Button("Make Move");
 		startButton.addClickHandler(new ClickHandler() {
 			
 			public void onClick(ClickEvent event) {
 				
 				startButton.setText("Start Over");
-				goButton.setEnabled(true);
+				activeIs(false); // wait until nextMove is populated
 				cn.dimLinks();
 				cn.activeIs(true);
 				cn.nextMove.clear();
@@ -134,12 +138,11 @@ public class Constello implements EntryPoint {
 				Boolean result = cn.makeMove();
 				if(result) {
 					
-					startButton.setEnabled(false);
-					goButton.setEnabled(false);
+					activeIs(false);
 				}
 			}
 		});
-		goButton.setEnabled(false);
+		goButton.setEnabled(false); // Initially disabled
 		RootPanel.get("gameControl").add(goButton);
 		
 		// Initialize Log Buffer
@@ -178,7 +181,15 @@ public class Constello implements EntryPoint {
 		});
 		RootPanel.get("auditControl").add(clearButton);
 	}
+	
+	public void activeIs(Boolean active) {
+		
+		startButton.setEnabled(active);
+		goButton.setEnabled(active);
+	}
 
 	private ConstelloServiceAsync _constelloSvc = GWT.create(ConstelloService.class);
 	private Constellation cn = new Constellation(400, 400, gameMode.SOLO);
+	private Button startButton;
+	private Button goButton;
 }

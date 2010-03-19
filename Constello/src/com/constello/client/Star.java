@@ -61,6 +61,7 @@ public class Star extends Circle {
 
 				victim.nimmedIs(true);
 				_parent.nextMove.push(victim);
+				_parent.enable(true);
 			}
 		}); // End ClickHandler definition
 		

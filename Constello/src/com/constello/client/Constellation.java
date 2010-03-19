@@ -5,7 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.constello.client.Constello.gameMode;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Random;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.vaadin.contrib.gwtgraphics.client.DrawingArea;
 import com.vaadin.contrib.gwtgraphics.client.animation.Animate;
 import com.vaadin.contrib.gwtgraphics.client.shape.Rectangle;
@@ -126,6 +128,8 @@ public class Constellation extends DrawingArea {
 	public Boolean makeMove() {
 		
 		dimLinks();
+		enable(false);
+		_numMoves++;
 		
 		// Dim the selected stars to indicate they have been nimmed
 		while(!nextMove.empty()) {
@@ -140,7 +144,7 @@ public class Constellation extends DrawingArea {
 			if(_numNimmed == _numStars) {
 
 				activeIs(false);
-				Text gameover = new Text(100, 300, "Congratulations, You Win!");
+				Text gameover = new Text(100, 300, "You finished in " + _numMoves + " moves");
 				gameover.setStrokeColor("yellow");
 				add(gameover);
 				new Animate(gameover, "strokeopacity", 0.0, 1.0, 1000).start();
@@ -163,7 +167,7 @@ public class Constellation extends DrawingArea {
 			else if(_numNimmed == _numStars) {
 				
 				activeIs(false);
-				Text gameover = new Text(100, 300, "You lost, now why did you remove all the stars?");
+				Text gameover = new Text(100, 300, "You lost by suicide!");
 				gameover.setStrokeColor("red");
 				add(gameover);
 				new Animate(gameover, "strokeopacity", 0.0, 1.0, 1000).start();
@@ -185,8 +189,42 @@ public class Constellation extends DrawingArea {
 				}
 			}
 		}
+		else if(_mode == gameMode.VS){
+			
+			AsyncCallback<int[]> callback = new AsyncCallback<int[]>() {
+
+				public void onFailure(Throwable caught) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				public void onSuccess(int[] counter) {
+					// TODO Auto-generated method stub
+					Log.logMessage("wtfbbq " + counter[0] + " " + counter[1]);
+				}
+			};
+			int dumbArray[] = new int[3];
+			dumbArray[0] = 2;
+			dumbArray[1] = 3;
+			dumbArray[2] = 4;
+			_constelloSvc.sendMove(dumbArray, callback);
+		}
 		
 		return false;
+	}
+	
+	/* Setter and Getter for _parent */
+	public Constello parent() {
+		
+		return _parent;
+	}
+	public void parentIs(Constello p) {
+		
+		_parent = p;
+	}
+	public void enable(Boolean foo) {
+		
+		_parent.activeIs(foo);
 	}
 	
 	/* Audit interface */
@@ -207,8 +245,7 @@ public class Constellation extends DrawingArea {
 		ar.verify(_links.size() == _numLinks, "Link list size matches link count");
 		// Invariant 1.3
 		// - check that getVectorObjectCount matches _numStars + _numLinks + 1
-		// TODO - this is broken after the game is over since the text adds 1 to getVectorObjectCount
-		ar.verify(getVectorObjectCount() == (_numStars + _numLinks + 1), "Vector object count matches (star count + link count + 1)");
+		ar.verify(!_active || getVectorObjectCount() == (_numStars + _numLinks + 1), "Vector object count matches (star count + link count + 1)");
 		// Invariant 1.4
 		// - check that nextMove is empty if _active is false
 		ar.verify(_active || nextMove.empty(), "Constellation is either active or nextMove must be empty");
@@ -319,4 +356,7 @@ public class Constellation extends DrawingArea {
 	private int _numNimmed = 0;
 	private Boolean _active = false;
 	private gameMode _mode;
+	private ConstelloServiceAsync _constelloSvc = GWT.create(ConstelloService.class);
+	private Constello _parent = null;
+	private int _numMoves = 0;
 }
